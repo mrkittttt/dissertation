@@ -1,0 +1,10 @@
+- name: Pull component images
+  ansible.builtin.shell: "kubeadm config images pull && touch /var/tmp/kubeadm_images_pulled"
+  args:
+    creates: /var/tmp/kubeadm_images_pulled
+
+
+- name: Init k8s cluster
+  ansible.builtin.shell: "kubeadm init --pod-network-cidr={{ pod_cidr }} && touch /var/tmp/kubeadm_cluster_initialized"
+  args:
+    creates: /var/tmp/kubeadm_cluster_initialized

@@ -1,0 +1,39 @@
+- name: Install Kubernetes utilities on Ubuntu
+  when: ansible_distribution == "Ubuntu"
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - curl
+          - ca-certificates
+          - gpg
+        state: present
+
+
+    - name: Create keyrings directory
+      ansible.builtin.command: install -m 0755 -d /etc/apt/keyrings
+      args:
+        creates: /etc/apt/keyrings
+
+
+    - name: Add Kubernetes GPG key
+      ansible.builtin.shell: "curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg"
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+
+    - name: Add apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+        filename: kubernetes
+
+
+    - name: Install kubeadm, kubelet and kubectl
+      ansible.builtin.apt:
+        pkg:
+          - kubeadm
+          - kubelet
+          - kubectl
+        state: present
+        update_cache: true

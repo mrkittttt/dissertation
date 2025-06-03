@@ -1,0 +1,20 @@
+masters:
+  hosts:
+    192.168.137.11:
+      ansible_python_interpreter: /usr/bin/python3
+
+
+workers:
+  hosts:
+    192.168.137.12:
+      ansible_python_interpreter: /usr/bin/python3
+    192.168.137.13:
+      ansible_python_interpreter: /usr/bin/python3
+
+
+initial_master:
+  hosts:
+    192.168.137.11:
+      ansible_python_interpreter: /usr/bin/python3
+  vars:
+    pod_cidr: 10.244.0.0/16
