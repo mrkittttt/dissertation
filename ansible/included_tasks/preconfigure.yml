@@ -7,6 +7,12 @@
     reload: true
 
 
+- name: Install NFS client utility
+  when: ansible_distribution == "Ubuntu"
+  ansible.builtin.apt:
+    name: nfs-common
+
+
 # For flannel CNI
 - name: Load br_netfilter module
   community.general.modprobe:

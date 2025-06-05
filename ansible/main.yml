@@ -1,8 +1,13 @@
 - name: Make preconfigurations on nodes
   hosts: all
-  gather_facts: false
+  gather_facts: true
   become: true
   tags: preconfigure
+  pre_tasks:
+    - name: Update apt cache
+      when: ansible_distribution == "Ubuntu"
+      ansible.builtin.apt:
+        update_cache: true
   tasks:
     - name: Include preconfigure.yml
       ansible.builtin.include_tasks: included_tasks/preconfigure.yml

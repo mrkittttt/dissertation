@@ -1,11 +1,6 @@
 - name: Install containerd on Ubuntu
   when: ansible_distribution == "Ubuntu"
   block:
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: true
-
-
     - name: Install necessary packages before containerd installation
       ansible.builtin.apt:
         pkg:
