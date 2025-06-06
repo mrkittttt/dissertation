@@ -1,0 +1,32 @@
+- name: Install apt-transport-https
+  when: ansible_distribution == "Ubuntu"
+  block:
+    - name: Install apt-transport-https
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+        state: present
+
+
+- name: Create keyrings directory
+  ansible.builtin.command: install -m 0755 -d /etc/apt/keyrings
+  args:
+    creates: /etc/apt/keyrings
+
+
+- name: Add helm GPG key
+  ansible.builtin.shell: "curl https://baltocdn.com/helm/signing.asc | gpg --dearmor -o /etc/apt/keyrings/helm.gpg"
+  args:
+    creates: /etc/apt/keyrings/helm.gpg
+
+
+- name: Add helm apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_architecture] }} signed-by=/etc/apt/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
+    filename: helm-stable-debian
+
+
+- name: Install helm
+  ansible.builtin.apt:
+    name: helm
+    update_cache: true
