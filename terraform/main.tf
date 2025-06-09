@@ -13,14 +13,14 @@ resource "proxmox_vm_qemu" "nodes" {
   agent = 1
 
   sockets = 1
-  cores = var.cores
-  memory = var.memory
+  cores = each.value.cores
+  memory = each.value.memory
 
   disks {
     ide {
       ide0 {
         cloudinit {
-        storage = var.storage
+        storage = var.storage_name
        }
      }
    }
@@ -28,8 +28,8 @@ resource "proxmox_vm_qemu" "nodes" {
     scsi {
       scsi0 {
         disk {
-          size = "20G"
-          storage = var.storage
+          size = each.value.storage_size
+          storage = var.storage_name
         }
       }
     }
@@ -53,10 +53,10 @@ resource "proxmox_vm_qemu" "nodes" {
 
   # static IP for each VM and a default gateway
   # set to ip=dhcp if static IP is not needed
-  ipconfig0="ip=${each.value.ip}/24,gw=${each.value.gw}"
+  ipconfig0="ip=${each.value.ip}/24,gw=${var.gw}"
   nameserver="8.8.8.8"
 
   ciupgrade = false  # disable auto package updating
-  ciuser = each.value.ciuser
+  ciuser = var.ciuser
   sshkeys = var.ssh_keys
 }
