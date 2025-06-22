@@ -112,3 +112,20 @@
   tasks:
     - name: Include install_helm.yml
       ansible.builtin.include_tasks: included_tasks/install_helm.yml
+
+
+- name: Install NFS CSI
+  hosts: initial_master
+  gather_facts: false
+  tags: install_nfs_csi
+  tasks:
+    - name: Copy script file for installation
+      ansible.builtin.copy:
+        src: files/install_nfs_csi.sh
+        dest: ~/install_nfs_csi.sh
+        mode: u=rwx,go=rx
+
+    - name: Execute install_nfs_csi.sh
+      ansible.builtin.shell: ~/install_nfs_csi.sh && touch /var/tmp/nfs_csi_installed
+      args:
+        creates: /var/tmp/nfs_csi_installed
