@@ -129,3 +129,53 @@
       ansible.builtin.shell: ~/install_nfs_csi.sh && touch /var/tmp/nfs_csi_installed
       args:
         creates: /var/tmp/nfs_csi_installed
+
+
+    - name: Delete script file after installation
+      ansible.builtin.file:
+        path: ~/install_nfs_csi.sh
+        state: absent
+
+
+- name: Install ECK
+  hosts: initial_master
+  gather_facts: false
+  tags: install_eck
+  tasks:
+    - name: Copy script file for installation
+      ansible.builtin.copy:
+        src: files/install_eck.sh
+        dest: ~/install_eck.sh
+        mode: u=rwx,go=rx
+
+    - name: Copy values file for ECK helm chart
+      ansible.builtin.copy:
+        src: files/stack-values.yml
+        dest: ~/stack-values.yml
+        mode: u=rw,go=r
+
+    - name: Execute install_eck.sh
+      ansible.builtin.shell: ~/install_eck.sh && touch /var/tmp/eck_installed
+      args:
+        creates: /var/tmp/eck_installed
+
+
+    - name: Delete script file after installation
+      ansible.builtin.file:
+        path: ~/install_eck.sh
+        state: absent
+
+
+- name: Display elastic user password
+  hosts: initial_master
+  gather_facts: false
+  tags: show_pass
+  tasks:
+    - name: Save elastic user password in a register
+      ansible.builtin.shell: "kubectl get secrets elasticsearch-es-elastic-user -n elastic-stack -o jsonpath={.data.elastic} | base64 -d"
+      register: elastic_pass
+
+
+    - name: Display elastic user password
+      ansible.builtin.debug:
+        msg: "Password for user elastic: {{ elastic_pass.stdout }}"
