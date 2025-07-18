@@ -1,3 +1,7 @@
+data "vault_generic_secret" "kv_creds" {
+  path = "terraform/creds"
+}
+
 resource "proxmox_vm_qemu" "nodes" {
 
   for_each = {for vm in var.nodes: vm.hostname => vm}
@@ -58,5 +62,6 @@ resource "proxmox_vm_qemu" "nodes" {
 
   ciupgrade = false  # disable auto package updating
   ciuser = var.ciuser
+  cipassword = data.vault_generic_secret.kv_creds.data["password"]
   sshkeys = var.ssh_keys
 }

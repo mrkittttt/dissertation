@@ -72,3 +72,13 @@ variable "nodes" {
   }))
   description = "List of objects over which for_each iterates. An Object has unique values for each VM"
 }
+
+variable "vault_server" {
+  type = string
+  description = "IP address of Vault server"
+}
+
+variable "vault_token" {
+  type = string
+  description = "Service token to allow Terraform read secrets from Vault"
+}
