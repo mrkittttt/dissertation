@@ -11,7 +11,7 @@ eck-elasticsearch:
   fullnameOverride: elasticsearch
   nodeSets:
     - name: default
-      count: 1
+      count: 3
       volumeClaimTemplates:
         - metadata:
             name: elasticsearch-data
